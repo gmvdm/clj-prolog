@@ -1,0 +1,6 @@
+pom.xml
+*jar
+lib
+classes
+log
+.DS_Store
