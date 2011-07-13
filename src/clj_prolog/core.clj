@@ -4,7 +4,7 @@
 (def
   ^{:doc "Indicates a pattern match fail"}
   fail
-  '((false false)))
+  nil)
 
 ;; TODO is this the best data structure?
 (def
@@ -13,7 +13,7 @@
   '((true true)))
 
 (defn variable? [x]
-  (and (symbol? x) (= (first (str x)) "?")))
+  (and (symbol? x) (= (first (str x)) \?)))
 
 ;; TODO figure out binding lists, maybe as a map?
 ;; TODO re-factor
@@ -42,7 +42,7 @@
           (= input (binding-val binding)) bindings
           :else fail)))
 
-(def unify)
+(def unify) ;; forward declaration
 
 (defn unify-variable [var x bindings]
   "Unify var with x, using (and maybe extending) bindings"
@@ -50,13 +50,17 @@
     (unify (lookup var bindings) x bindings)
     (extend-bindings var x bindings)))
 
-(defn unify [x y & bindings]
+;; TODO default argument is a bit odd
+(defn unify 
   "See if x and y match given bindings"
-  (let [bindings (if (nil? bindings) no-bindings bindings)]
-    (cond (= bindings fail) fail
-          (variable? x) (unify-variable x y bindings)
-          (variable? y) (unify-variable y x bindings)
-          (= x y) bindings
-          (and (coll? x) (coll? y)) (unify
-                                     (first x) (first y) bindings)
-          :else fail)))
+  ([x y] (unify x y no-bindings))
+  ([x y bindings]
+     (cond (= bindings fail) fail
+           (= x y) bindings
+           (variable? x) (unify-variable x y bindings)
+           (variable? y) (unify-variable y x bindings)
+           ;; lists
+           (and (coll? x) (coll? y))
+           (unify (rest x) (rest y)
+                  (unify (first x) (first y) bindings))
+           :else fail)))
