@@ -46,9 +46,11 @@
 
 (defn unify-variable [var x bindings]
   "Unify var with x, using (and maybe extending) bindings"
-  (if (get-binding var bindings)
-    (unify (lookup var bindings) x bindings)
-    (extend-bindings var x bindings)))
+  (cond
+   (get-binding var bindings) (unify (lookup var bindings) x bindings)
+   (and (variable? x)
+        (get-binding x bindings)) (unify var (lookup x bindings) bindings)
+   :else (extend-bindings var x bindings)))
 
 ;; TODO default argument is a bit odd
 (defn unify 
