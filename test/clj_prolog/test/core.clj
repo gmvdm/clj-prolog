@@ -26,6 +26,8 @@
        1 2 no-bindings fail
        ))
 
+;; TODO - occurs check tests
+
 (deftest unify-test
   (are [x y bindings] (= (unify x y) bindings)
        '(f ?x) '(f ?y) '((?x ?y))

@@ -1,5 +1,8 @@
 (ns clj-prolog.core)
 
+(def
+  ^{:doc "Should unify do an occurs check?"}
+  *occurs-check* true)
 
 (def
   ^{:doc "Indicates a pattern match fail"}
@@ -42,6 +45,10 @@
           (= input (binding-val binding)) bindings
           :else fail)))
 
+(defn occurs-check [var x bindings]
+  "Does var occur anywhere inside x?"
+  false)
+
 (def unify) ;; forward declaration
 
 (defn unify-variable [var x bindings]
@@ -50,6 +57,8 @@
    (get-binding var bindings) (unify (lookup var bindings) x bindings)
    (and (variable? x)
         (get-binding x bindings)) (unify var (lookup x bindings) bindings)
+   ;; occurs
+   (and *occurs-check* (occurs-check var x bindings)) fail
    :else (extend-bindings var x bindings)))
 
 ;; TODO default argument is a bit odd
