@@ -1,4 +1,4 @@
-(ns clj-prolog.core)
+(ns clj-prolog.unify)
 
 (def
   ^{:doc "Should unify do an occurs check?"}
@@ -9,7 +9,6 @@
   fail
   nil)
 
-;; TODO is this the best data structure?
 (def
   ^{:doc "Indicates a pattern match success with no bindings"}
   no-bindings
@@ -18,8 +17,6 @@
 (defn variable? [x]
   (and (symbol? x) (= (first (str x)) \?)))
 
-;; TODO figure out binding lists, maybe as a map?
-;; TODO re-factor
 (defn get-binding [var bindings]
   "Find a (var value) pair in the binding list"
   (first (filter #(= (first %) var) bindings)))
@@ -47,7 +44,13 @@
 
 (defn occurs-check [var x bindings]
   "Does var occur anywhere inside x?"
-  false)
+  (cond (= var x) true
+        (and (variable? x)
+             (get-binding x bindings)) (occurs-check var
+                                                     (lookup x bindings) bindings)
+             (coll? x) (or (occurs-check var (first x) bindings)
+                           (occurs-check var (rest x) bindings))
+             :else false))
 
 (def unify) ;; forward declaration
 
@@ -61,7 +64,6 @@
    (and *occurs-check* (occurs-check var x bindings)) fail
    :else (extend-bindings var x bindings)))
 
-;; TODO default argument is a bit odd
 (defn unify 
   "See if x and y match given bindings"
   ([x y] (unify x y no-bindings))

@@ -1,5 +1,5 @@
-(ns clj-prolog.test.core
-  (:use [clj-prolog.core])
+(ns clj-prolog.test.unify
+  (:use [clj-prolog.unify])
   (:use [clojure.test]))
 
 
@@ -26,7 +26,10 @@
        1 2 no-bindings fail
        ))
 
-;; TODO - occurs check tests
+(deftest occurs-test
+  (are [var x bindings result] (= (occurs-check var x bindings) result)
+       '?x '(f ?x) no-bindings true
+       '?x '?y no-bindings false))
 
 (deftest unify-test
   (are [x y bindings] (= (unify x y) bindings)
