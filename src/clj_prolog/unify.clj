@@ -84,7 +84,10 @@
         (= bindings no-bindings) x
         (and (variable? x)
              (get-binding x bindings)) (subst-bindings bindings (lookup x bindings))
-        (not (coll? x)) x
-        :else true ;; TODO - recursive case    
-         
-        ))
+        (and (coll? x) (not (empty? x))) (cons (subst-bindings bindings (first x))
+                                               (subst-bindings bindings (rest x)))
+        :else x))
+
+(defn unifier [x y]
+  "Return something that unifies with both x and y or fail."
+  (subst-bindings (unify x y) x))

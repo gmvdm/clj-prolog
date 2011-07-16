@@ -1,6 +1,7 @@
 (ns clj-prolog.test.unify
-  (:use [clj-prolog.unify])
-  (:use [clojure.test]))
+  (:use [clj-prolog.unify]
+        [clojure.contrib.math]
+        [clojure.test]))
 
 
 (deftest variable-test
@@ -41,3 +42,8 @@
        '(?x ?x ?x) '(?y ?y ?y) '((?x ?y))
        '(?x ?x a) '(?y ?y ?y) '((?y a) (?x ?y))
        ))
+
+(deftest unifier-test
+  (are [x y result] (= (unifier x y) result)
+       '(?x ?y a) '(?y ?x ?x) '(a a a)
+       '?x 2 2))
