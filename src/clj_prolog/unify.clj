@@ -77,3 +77,14 @@
            (unify (rest x) (rest y)
                   (unify (first x) (first y) bindings))
            :else fail)))
+
+(defn subst-bindings [bindings x]
+  "Substitute the value of vars in bindings into x, considering recursive bindings"
+  (cond (= bindings fail) fail
+        (= bindings no-bindings) x
+        (and (variable? x)
+             (get-binding x bindings)) (subst-bindings bindings (lookup x bindings))
+        (not (coll? x)) x
+        :else true ;; TODO - recursive case    
+         
+        ))
