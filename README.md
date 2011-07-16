@@ -18,7 +18,7 @@ a way of learning clojure by writing more code.
 
 ``` clojure
 user> (use :reload 'clj-prolog.unify)
-nil
+nil 
 user> (unify '(?x + 1) '(2 + ?y))
 ((?y 1) (?x 2))
 ```
