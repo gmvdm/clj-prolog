@@ -17,9 +17,9 @@
   (first relation))
 
 (defmacro <- [& clause]
-  `(add-clause '~clause))
+  `(add-clause! '~clause))
 
-(defn add-clause [clause]
+(defn add-clause! [clause]
   "Add a clause to the DB"
   (let [pred (predicate (clause-head clause))]
     (assert (and (symbol? pred) (not (variable? pred))))
@@ -29,7 +29,7 @@
       #(assoc % pred (conj (get-clauses pred) clause))))
     pred))
 
-(defn clear-db []
+(defn clear-db! []
   "Empty the database"
   (dosync
    (ref-set *db-predicates* {})))
@@ -52,21 +52,11 @@
   "Return a list of all the variables in exp"
   (seq (unique-find-anywhere-if 'clj-prolog.unify/variable? exp)))
 
-(defn foldl
-  ([acc pred s]
-     (if (= s ())
-       acc
-       (let [hd (first s)
-             nxt (pred acc hd)
-             tl (drop 1 s)]
-         (recur nxt pred tl))))
-  ([acc pred] acc))
-
 (defn rename-variables [x]
   "Replace all variables in x with new ones"
-  (let [var-map (foldl {} (fn [ys y]
-                            (merge ys {y (gensym y)}))
-                       (variables-in x))]
+  (let [var-map (reduce merge (map (fn [var]
+                                     {var (gensym var)})
+                                   (variables-in x)))]
     (postwalk-replace var-map x)))
 
 (def prove-all)
@@ -82,10 +72,44 @@
 (defn prove-all [goals bindings]
   "Return a list of solutions to the conjunction of goals"
   (cond (= bindings fail) fail
-        (empty? goals) (list bindings)
+        (nil? goals) (list bindings)
         :else (map (fn [goal1-solution]
                      (prove-all (rest goals) goal1-solution))
                    (prove (first goals) bindings))))
 
-(defmacro ?- [& goals]
+(defmacro ?-- [& goals]
   `(prove-all '~goals no-bindings))
+
+(defn show-prolog-vars [vars bindings]
+  "Print each var with its binding"
+  (if (empty? vars)
+    (print "Yes")
+    (for [var vars]
+      (print (str "\n" var " = " (subst-bindings bindings var)))))
+  (print ";\n"))
+
+(defn show-prolog-solutions [vars solutions]
+  (if (empty? solutions)
+    (print "No")
+    (map #(show-prolog-vars vars %) solutions)))
+
+(defmacro ?- [& goals]
+  `(top-level-prove '~goals))
+
+(defn top-level-prove [goals]
+  "Prove the goals and print the variables readably"
+  (println goals)
+  (show-prolog-solutions
+   (variables-in goals)
+   (prove-all goals no-bindings)))
+
+;; example
+
+(<- (likes Kim Robin))
+(<- (likes Sandy Lee))
+(<- (likes Sandy Kim))
+(<- (likes Robin cats))
+(<- (likes Sandy ?x) (likes ?x cats))
+(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
+(<- (likes ?x ?x))
+
