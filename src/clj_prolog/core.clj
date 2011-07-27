@@ -7,6 +7,7 @@
 
 (defn clause-body [clause]
   (rest clause))
+
 (def *db-predicates* (ref {}))
 
 (defn get-clauses [pred]
@@ -69,11 +70,14 @@
                       (unify goal (clause-head new-clause) bindings))))
        (get-clauses (predicate goal))))
 
+(defn mapcan [f xs]
+  (apply concat (filter #(not (empty? %)) (map f xs))))
+
 (defn prove-all [goals bindings]
   "Return a list of solutions to the conjunction of goals"
   (cond (= bindings fail) fail
-        (nil? goals) (list bindings)
-        :else (map (fn [goal1-solution]
+        (empty? goals) (list bindings)
+        :else (mapcan (fn [goal1-solution]
                      (prove-all (rest goals) goal1-solution))
                    (prove (first goals) bindings))))
 
@@ -105,11 +109,14 @@
 
 ;; example
 
-(<- (likes Kim Robin))
-(<- (likes Sandy Lee))
-(<- (likes Sandy Kim))
-(<- (likes Robin cats))
-(<- (likes Sandy ?x) (likes ?x cats))
-(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
-(<- (likes ?x ?x))
+;; (<- (likes Kim Robin))
+;; (<- (likes Sandy Lee))
+;; (<- (likes Sandy Kim))
+;; (<- (likes Robin cats))
+;; (<- (likes Sandy ?x) (likes ?x cats))
+;; (<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
+;; (<- (likes ?x ?x))
 
+;; (<- (likes Sandy Jane))
+(<- (likes Kim cats))
+(<- (likes Sandy ?x) (likes ?x cats))
