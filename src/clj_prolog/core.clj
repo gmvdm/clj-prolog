@@ -90,16 +90,16 @@
     (print "Yes")
     (doall
      (for [var vars]
-       (print (str var " = " (subst-bindings bindings var))))))
-  (print ";\n"))
+       (print (str "\n" var " = " (subst-bindings bindings var))))))
+  (print ";"))
 
 (defn show-prolog-solutions [vars solutions]
   (if (empty? solutions)
-    (println "No")
+    (print "No.")
     (doall
       (for [solution solutions]
         (show-prolog-vars vars solution))))
-  nil)
+  (print "\n"))
 
 (defmacro ?- [& goals]
   `(top-level-prove '~goals))
