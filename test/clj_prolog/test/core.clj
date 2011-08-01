@@ -11,17 +11,17 @@
 (deftest simple-prove 
   (clear-db!)
   (<- (likes Sandy Jane))
-  (is (= (prove '(likes Sandy Jane) no-bindings) (list (list no-bindings)))))
+  (is (= (prove '(likes Sandy Jane) no-bindings) (list no-bindings))))
 
 (deftest prove-var
   (clear-db!)
   (<- (likes Sandy Jane))
-  (is (= (prove '(likes Sandy ?who) no-bindings) '((((?who Jane)))))))
+  (is (= (prove '(likes Sandy ?who) no-bindings) '(((?who Jane))))))
 
 (deftest prove-fail
   (clear-db!)
   (<- (likes Sandy Jane))
-  (is (= (prove '(likes Sandy Peter) no-bindings) (list fail))))
+  (is (= (prove '(likes Sandy Peter) no-bindings) fail)))
 
 (deftest prove-inf
   (clear-db!)
