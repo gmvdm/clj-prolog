@@ -88,21 +88,24 @@
   "Print each var with its binding"
   (if (empty? vars)
     (print "Yes")
-    (for [var vars]
-      (print (str "\n" var " = " (subst-bindings bindings var)))))
+    (doall
+     (for [var vars]
+       (print (str var " = " (subst-bindings bindings var))))))
   (print ";\n"))
 
 (defn show-prolog-solutions [vars solutions]
   (if (empty? solutions)
-    (print "No")
-    (map #(show-prolog-vars vars %) solutions)))
+    (println "No")
+    (doall
+      (for [solution solutions]
+        (show-prolog-vars vars solution))))
+  nil)
 
 (defmacro ?- [& goals]
   `(top-level-prove '~goals))
 
 (defn top-level-prove [goals]
   "Prove the goals and print the variables readably"
-  (println goals)
   (show-prolog-solutions
    (variables-in goals)
    (prove-all goals no-bindings)))
