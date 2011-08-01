@@ -60,18 +60,18 @@
                                    (variables-in x)))]
     (postwalk-replace var-map x)))
 
+(defn mapcan [f xs]
+  (apply concat (filter #(not (empty? %)) (map f xs))))
+
 (def prove-all)
 
 (defn prove [goal bindings]
   "Return a list of possible solutions to goal"
-  (map (fn [clause]
+  (mapcan (fn [clause]
          (let [new-clause (rename-variables clause)]
            (prove-all (clause-body new-clause)
                       (unify goal (clause-head new-clause) bindings))))
        (get-clauses (predicate goal))))
-
-(defn mapcan [f xs]
-  (apply concat (filter #(not (empty? %)) (map f xs))))
 
 (defn prove-all [goals bindings]
   "Return a list of solutions to the conjunction of goals"
@@ -109,14 +109,14 @@
 
 ;; example
 
-;; (<- (likes Kim Robin))
-;; (<- (likes Sandy Lee))
-;; (<- (likes Sandy Kim))
-;; (<- (likes Robin cats))
-;; (<- (likes Sandy ?x) (likes ?x cats))
-;; (<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
-;; (<- (likes ?x ?x))
+(<- (likes Kim Robin))
+(<- (likes Sandy Lee))
+(<- (likes Sandy Kim))
+(<- (likes Robin cats))
+(<- (likes Sandy ?x) (likes ?x cats))
+(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
+(<- (likes ?x ?x))
 
 ;; (<- (likes Sandy Jane))
-(<- (likes Kim cats))
-(<- (likes Sandy ?x) (likes ?x cats))
+;; (<- (likes Kim cats))
+;; (<- (likes Sandy ?x) (likes ?x cats))
