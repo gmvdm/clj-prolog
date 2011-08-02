@@ -16,6 +16,46 @@ a way of learning clojure by writing more code.
 
 ## Usage
 
+Creation of rules & facts:
+``` clojure
+(<- (likes Kim Robin))
+(<- (likes Sandy Lee))
+(<- (likes Sandy Kim))
+(<- (likes Robin cats))
+(<- (likes Sandy ?x) (likes ?x cats))
+(<- (likes Kim ?x) (likes ?x Lee) (likes ?x Kim))
+(<- (likes ?x ?x))
+```
+
+Basic interaction:
+``` clojure
+user> (use :reload 'clj-prolog.core)
+nil
+
+user> (?- (likes Sandy ?who))
+
+?who = Sandy;
+?who = cats;
+?who = Sandy;
+?who = Robin;
+?who = Kim;
+?who = Lee;
+nil
+
+user> (?- (likes ?who Sandy))
+
+?who = Sandy;
+?who = Kim;
+?who = Sandy;
+nil
+
+user> (?- (likes Robin Lee))
+No.
+nil
+```
+
+Unification:
+
 ``` clojure
 user> (use :reload 'clj-prolog.unify)
 nil 
