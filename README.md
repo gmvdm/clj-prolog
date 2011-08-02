@@ -17,6 +17,7 @@ a way of learning clojure by writing more code.
 ## Usage
 
 Creation of rules & facts:
+
 ``` clojure
 (<- (likes Kim Robin))
 (<- (likes Sandy Lee))
@@ -28,6 +29,7 @@ Creation of rules & facts:
 ```
 
 Basic interaction:
+
 ``` clojure
 user> (use :reload 'clj-prolog.core)
 nil
