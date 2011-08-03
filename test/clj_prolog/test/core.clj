@@ -37,10 +37,6 @@
   (<- (likes Sandy ?x) (likes ?x cats))
   (is (has-any? (prove '(likes Sandy ?who) no-bindings) 'Kim)))
 
-;; (deftest prove-atomic
-;;   (clear-db!)
-;;   (<- a b)
-;;   )
 
 (deftest prove-all-fail
   (clear-db!)
@@ -57,3 +53,10 @@
        (fn [x] (list (+ x 10) 'x)) '(1 2 3 4) '(11 x 12 x 13 x 14 x)
        (fn [x] (if (number? x) (list x) nil)) '(a 1 b c 3 4 d 5) '(1 3 4 5)
        ))
+
+(deftest fact-macro
+  (clear-db!)
+  (fact (likes Sandy Jim))
+  (is (has-any? (prove '(likes Sandy ?who) no-bindings) 'Jim)))
+
+

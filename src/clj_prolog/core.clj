@@ -20,6 +20,9 @@
 (defmacro <- [& clause]
   `(add-clause! '~clause))
 
+(defmacro fact [& clause]
+  `(add-clause! '~clause))
+
 (defn add-clause! [clause]
   "Add a clause to the DB"
   (let [pred (predicate (clause-head clause))]
