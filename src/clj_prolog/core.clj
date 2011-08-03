@@ -26,9 +26,10 @@
 (defmacro rule [& clause]
   `(add-rule-clause! '~clause))
 
-(defn add-clause! [clause]
+(defn add-clause! [raw-clause]
   "Add a clause to the DB"
-  (let [pred (predicate (clause-head clause))]
+  (let [clause (map (fn [x] (if (coll? x) x (list x))) raw-clause)
+        pred (predicate (clause-head clause))]
     (assert (and (symbol? pred) (not (variable? pred))))
     (dosync
      (alter

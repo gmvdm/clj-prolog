@@ -64,3 +64,10 @@
   (fact (likes Robin cats))
   (rule (likes Sandy ?x) if (likes ?x cats))
   (is (has-any? (prove '(likes Sandy ?who) no-bindings) 'Robin)))
+
+(deftest no-args
+  (clear-db!)
+  (<- p q r)
+  (<- q)
+  (<- r)
+  (is (= (prove '(p) no-bindings) (list no-bindings))))
