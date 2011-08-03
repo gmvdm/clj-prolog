@@ -29,7 +29,7 @@
 (deftest prove-fail
   (clear-db!)
   (<- (likes Sandy Jane))
-  (is (= (prove '(likes Sandy Peter) no-bindings) fail)))
+  (is (empty? (prove '(likes Sandy Peter) no-bindings))))
 
 (deftest prove-inf
   (clear-db!)
