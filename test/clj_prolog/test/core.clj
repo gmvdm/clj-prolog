@@ -59,4 +59,8 @@
   (fact (likes Sandy Jim))
   (is (has-any? (prove '(likes Sandy ?who) no-bindings) 'Jim)))
 
-
+(deftest rule-macro
+  (clear-db!)
+  (fact (likes Robin cats))
+  (rule (likes Sandy ?x) if (likes ?x cats))
+  (is (has-any? (prove '(likes Sandy ?who) no-bindings) 'Robin)))

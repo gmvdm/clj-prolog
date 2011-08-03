@@ -23,6 +23,9 @@
 (defmacro fact [& clause]
   `(add-clause! '~clause))
 
+(defmacro rule [& clause]
+  `(add-rule-clause! '~clause))
+
 (defn add-clause! [clause]
   "Add a clause to the DB"
   (let [pred (predicate (clause-head clause))]
@@ -32,6 +35,11 @@
       *db-predicates*
       #(assoc % pred (conj (get-clauses pred) clause))))
     pred))
+
+(defn add-rule-clause! [clause]
+  (let [new-clause (filter #(not= % 'if) clause)]
+    (prn new-clause)
+    (add-clause! new-clause)))
 
 (defn clear-db! []
   "Empty the database"
