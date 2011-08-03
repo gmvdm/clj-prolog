@@ -18,6 +18,14 @@
   (<- (likes Sandy Jane))
   (is (= (prove '(likes Sandy ?who) no-bindings) '(((?who Jane))))))
 
+(defn has-any? [tree e]
+  "Test if e is an element of the tree"
+  (cond
+   (and (coll? tree) (empty? tree)) false
+   (= tree e) true
+   (coll? tree) (or (has-any? (first tree) e) (has-any? (rest tree) e))
+   :else false))
+
 (deftest prove-fail
   (clear-db!)
   (<- (likes Sandy Jane))
@@ -27,7 +35,12 @@
   (clear-db!)
   (<- (likes Kim cats))
   (<- (likes Sandy ?x) (likes ?x cats))
-  (is (= (prove '(likes Sandy ?who) no-bindings) nil)))
+  (is (has-any? (prove '(likes Sandy ?who) no-bindings) 'Kim)))
+
+;; (deftest prove-atomic
+;;   (clear-db!)
+;;   (<- a b)
+;;   )
 
 (deftest prove-all-fail
   (clear-db!)
